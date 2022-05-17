@@ -6,7 +6,7 @@ VIVADO_OPT  := -mode batch -nolog -nojournal -notrace -source
 FPGA_BOARD  ?= u280
 QSFP_PORT   ?= qsfp0
 
-#Options: qsfp0, qsfp1, pcieEth
+#Options: qsfp0, qsfp1, pcie
 
 #Generate the Ethernet IP
 

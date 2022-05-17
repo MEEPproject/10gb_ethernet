@@ -62,7 +62,7 @@ set top_module "$root_dir/src/meep_eth_top.v"
 #add_files -quiet ${ip_files}
 
 # Add Constraint files to project
-if {$g_qsfp_port != "pcieEth"} {
+if {$g_qsfp_port != "pcie"} {
     # TODO: Add Out Of Context constraints in case it is necessary in the future
     set top_module "$root_dir/src/meep_eth_top.v"
     add_files -fileset [get_filesets constrs_1] "$root_dir/xdc/${g_board_part}/ethernet_${g_qsfp_port}.xdc"
