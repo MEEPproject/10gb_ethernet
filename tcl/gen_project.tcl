@@ -21,7 +21,7 @@ if { $::argc == 2 } {
 	set g_qsfp_port [lindex $argv 1]
 
 } else {
-	puts "Error: Bad usage. This script must receive the Alveo Board code (u280/u55c) and the QSFP port (qsfp0/qsfp1)"
+	puts "Error: Bad usage. This script must receive the Alveo Board code (u280/u55c) and the QSFP port (qsfp0/qsfp1/pcieEth)"
 }
 set root_dir $g_root_dir
 set g_project_name $g_project_name
@@ -62,10 +62,18 @@ set top_module "$root_dir/src/meep_eth_top.v"
 #add_files -quiet ${ip_files}
 
 # Add Constraint files to project
-# TODO: Add Out Of Context constraints in case it is necessary in the future
-add_files -fileset [get_filesets constrs_1] "$root_dir/xdc/${g_board_part}/ethernet_${g_qsfp_port}.xdc"
-set_property target_language VHDL [current_project]
-puts "Project generation ended successfully"
-#source $root_dir/tcl/gen_runs.tcl
-source $root_dir/tcl/project_options.tcl
+if {$g_qsfp_port != "pcieEth"} {
+    # TODO: Add Out Of Context constraints in case it is necessary in the future
+    set top_module "$root_dir/src/meep_eth_top.v"
+    add_files -fileset [get_filesets constrs_1] "$root_dir/xdc/${g_board_part}/ethernet_${g_qsfp_port}.xdc"
+    source ${g_root_dir}/ip/${g_board_part}/ethernet-${g_board_part}.tcl
+    #set_property target_language VHDL [current_project]
+} else {
+
+    set top_module "$root_dir/src/meep/ethernet_pcie.v"
+    source ${g_root_dir}/ip/common/ethernet-pcie.tcl
+
+}
 source $root_dir/tcl/gen_ip.tcl
+
+puts "Project generation ended successfully"
