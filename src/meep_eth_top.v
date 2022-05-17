@@ -130,14 +130,14 @@ wire mdio_clock;
 wire mdio_data;
 wire mdio_reset;
 wire mdio_int;
-wire reset_i;
+wire resetn_i;
 wire interrupt_int;
 
 (* dont_touch = "true" *) reg interrupt_o;
 
 assign mdio_int = 0;
 
-assign gt_rstn = ~reset_i;
+assign gt_rstn = resetn_i;
 
 always @(posedge gt_clock) begin
     interrupt_o <= interrupt_int;
@@ -202,7 +202,7 @@ ethernet  #(.dma_addr_bits(dma_addr_bits),.dma_word_bits(dma_word_bits),.enable_
 	.mdio_data(mdio_data),//unconnected
 	.mdio_int(mdio_int),//unconnected
 	.mdio_reset(mdio_reset),//Output unconnected
-	.reset(reset_i),//we don't need to forward-out the reset
+	.resetn(resetn_i),//we don't need to forward-out the reset
 	.status_vector(status));
 
 

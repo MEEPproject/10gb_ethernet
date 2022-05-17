@@ -33,7 +33,7 @@ module ethernet_pcie #(
 
     (* X_INTERFACE_INFO = "xilinx.com:signal:reset:1.0 reset RST" *)
     (* X_INTERFACE_PARAMETER = "POLARITY ACTIVE_HIGH" *)
-    output wire reset,
+    output wire resetn,
 
     (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 clock CLK" *)
     (* X_INTERFACE_PARAMETER = "ASSOCIATED_BUSIF M_AXI:S_AXI_LITE:TX_AXIS:RX_AXIS" *)
@@ -173,11 +173,12 @@ module ethernet_pcie #(
 `endif
 
 (* ASYNC_REG="true" *)
-reg  [2:0] reset_sync;
-assign reset = !reset_sync[2];
+reg  [2:0] resetn_sync;
+assign resetn = resetn_sync[2];
+
 
 always @(posedge clock)
-    reset_sync <= {reset_sync[1:0], async_resetn};
+    resetn_sync <= {resetn_sync[1:0], async_resetn};
 
 `define burst_size_log2 $clog2(burst_size)
 
