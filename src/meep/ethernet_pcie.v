@@ -22,7 +22,7 @@ THE SOFTWARE.
 
 */
 
-module ethernet_axis #(
+module ethernet_pcie #(
     parameter burst_size = 16,
     parameter dma_word_bits = 64,
     parameter dma_addr_bits = 64,
@@ -121,8 +121,6 @@ module ethernet_axis #(
     (* X_INTERFACE_PARAMETER = "SENSITIVITY LEVEL_HIGH" *)
     output wire interrupt,
 
-    input wire [15:0]status_vector,
-
     (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 TX_AXIS TDATA" *)
     (* X_INTERFACE_PARAMETER = "CLK_DOMAIN clock" *)
     output wire [axis_word_bits-1:0] tx_axis_tdata,
@@ -149,17 +147,30 @@ module ethernet_axis #(
     (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 RX_AXIS TLAST" *)
     input wire rx_axis_tlast,
     (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 RX_AXIS TUSER" *)
-    input wire rx_axis_tuser,
+    input wire rx_axis_tuser
 
+/*    `ifndef ETHERNET_OVER_PCIE
+      ,
+    input wire [15:0]status_vector,  
     (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 mdio_clock CLK" *)
     output reg mdio_clock,  // PHY MII Management clock
     inout wire mdio_data,   // PHY MII Management data
     output wire mdio_reset, // PHY reset
     input wire mdio_int     // PHY interrupt
+    `endif*/
 
 );
 
 `default_nettype none
+
+ // Declare the signals as the I/O for the MDIO is disabled
+`ifdef ETHERNET_OVER_PCIE
+ reg mdio_clock;
+ wire mdio_data;
+ wire mdio_reset;
+ wire mdio_int;
+ wire status_vector = 16'hCAFE;
+`endif
 
 (* ASYNC_REG="true" *)
 reg  [2:0] reset_sync;

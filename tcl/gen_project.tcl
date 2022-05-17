@@ -69,7 +69,9 @@ if {$g_qsfp_port != "pcieEth"} {
     source ${g_root_dir}/ip/${g_board_part}/ethernet-${g_board_part}.tcl
     #set_property target_language VHDL [current_project]
 } else {
-
+    set fileset_obj [get_filesets sources_1]
+    set VERILOG_MACROS [list "ETHERNET_OVER_PCIE"]
+    set_property "verilog_define" "${VERILOG_MACROS}" $fileset_obj
     set top_module "$root_dir/src/meep/ethernet_pcie.v"
     source ${g_root_dir}/ip/common/ethernet-pcie.tcl
 
