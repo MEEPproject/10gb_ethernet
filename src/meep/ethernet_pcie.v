@@ -22,6 +22,8 @@ THE SOFTWARE.
 
 */
 
+`define ETHERNET_OVER_PCIE
+
 module ethernet_pcie #(
     parameter burst_size = 16,
     parameter dma_word_bits = 64,
@@ -255,7 +257,7 @@ assign int_status = { mdio_phy_int, mdio_txrx_int, tx_int, rx_int, status_vector
 assign interrupt = (int_enable & int_status) != 0;
 
 always @(posedge clock) begin
-    if (reset) begin
+    if (~resetn) begin
         s_axi_rdata <= 0;
         s_axi_rresp <= 0;
         s_axi_rvalid <= 0;
@@ -428,7 +430,7 @@ assign tx_axis_tkeep = tx_axis_tlast && tx_pkt_size[`dma_word_log2-1:0] != 0 ? ~
 assign tx_axis_tlast = tx_m_axi_stop && !tx_burst_tail && (tx_burst_out_next == tx_burst_inp) && (tx_axis_byte_offs == tx_axis_byte_last);
 
 always @(posedge clock) begin
-    if (reset) begin
+    if (~resetn) begin
         m_axi_rd_cyc <= 0;
         m_axi_rd_err <= 0;
         m_axi_arvalid <= 0;
@@ -563,7 +565,7 @@ wire [`burst_size_log2-1:0] rx_burst_awlen4k = ~rx_burst_awaddr[11:`dma_word_log
 
 always @(posedge clock) begin
     // RX DMA
-    if (reset) begin
+    if (~resetn) begin
         m_axi_wr_cyc <= 0;
         m_axi_wr_err <= 0;
         m_axi_awvalid <= 0;
@@ -682,7 +684,7 @@ generate if (enable_mdio) begin
     reg [4:0] mdio_div;
 
     always @(posedge clock) begin
-        if (reset) begin
+        if (~resetn) begin
             mdio_rx <= 0;
             mdio_stop <= 0;
             mdio_done <= 0;
