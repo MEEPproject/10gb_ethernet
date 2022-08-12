@@ -32,17 +32,24 @@ module ethernet_alveo #(
 
 ) (
 
-    (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 clock CLK" *)
-    input wire clock,
+    (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 init_clk CLK" *)
+    input wire init_clk,
+    input wire locked,
 
-    input wire clock_ok,
-
+   (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 eth_gt_user_clock CLK" *)
+   (* X_INTERFACE_PARAMETER = "ASSOCIATED_BUSIF ETH0_TX_AXIS:ETH0_RX_AXIS" *)
+   (* X_INTERFACE_PARAMETER = "ASSOCIATED_RESET eth_gt_resetn" *)
     output wire eth_gt_user_clock,
+
+   (* X_INTERFACE_INFO = "xilinx.com:signal:reset:1.0 eth_gt_resetn RST" *)
+   (* X_INTERFACE_PARAMETER = "POLARITY ACTIVE_LOW" *)	    
+    output wire	eth_gt_resetn,
 
     output wire [15:0] eth0_status,
 
     /* ETH0 AXIS */
     (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH0_TX_AXIS TDATA" *)
+    (* X_INTERFACE_PARAMETER = "CLK_DOMAIN eth_gt_clock" *)
     input wire [63:0] eth0_tx_axis_tdata,
     (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH0_TX_AXIS TKEEP" *)
     input wire [7:0] eth0_tx_axis_tkeep,
@@ -67,14 +74,22 @@ module ethernet_alveo #(
     output wire eth0_rx_axis_tlast,
     (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH0_RX_AXIS TUSER" *)
     output wire eth0_rx_axis_tuser,
+    
+    	/* QSFP28 */
+    (* X_INTERFACE_INFO = "xilinx.com:interface:gt:1.0 qsfp_1x GTX_P" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME qsfp_1x, CAN_DEBUG false" *) output qsfp0_tx1_p,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:gt:1.0 qsfp_1x GTX_N" *) output qsfp0_tx1_n,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:gt:1.0 qsfp_1x GRX_P" *) input  qsfp0_rx1_p,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:gt:1.0 qsfp_1x GRX_N" *) input  qsfp0_rx1_n,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:diff_clock:1.0 qsfp_refclk CLK_N" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME qsfp_refclk, CAN_DEBUG false " *) input qsfp0_mgt_refclk_1_n,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:diff_clock:1.0 qsfp_refclk CLK_P" *)input qsfp0_mgt_refclk_1_p,
 
     /* QSFP28 #0 */
-    output wire         qsfp0_tx1_p,
+/*    output wire         qsfp0_tx1_p,
     output wire         qsfp0_tx1_n,
     input  wire         qsfp0_rx1_p,
     input  wire         qsfp0_rx1_n,
     input  wire         qsfp0_mgt_refclk_1_p,
-    input  wire         qsfp0_mgt_refclk_1_n,
+    input  wire         qsfp0_mgt_refclk_1_n,*/
     output wire         qsfp0_refclk_oe_b,
     output wire         qsfp0_refclk_fs
 
@@ -83,6 +98,8 @@ module ethernet_alveo #(
 // QSFP0
 assign qsfp0_refclk_oe_b = 1'b0;
 assign qsfp0_refclk_fs = 1'b1;
+
+assign eth_gt_resetn = ~tx_rst;
 
 // PTP configuration
 localparam PTP_TS_WIDTH = 96;
@@ -122,7 +139,7 @@ localparam AXIS_ETH_RX_USER_WIDTH = (PTP_TS_ENABLE ? PTP_TS_WIDTH : 0) + 1;
 localparam AXIS_ETH_STATUS_WIDTH = 16;
 
 // Internal 125 MHz clock
-wire clk_125mhz_int = clock;
+wire clk_125mhz_int = init_clk;
 reg rst_125mhz_int = 1;
 reg [9:0] reset_timer_reg = 0;
 wire rst_refclk_int;
@@ -132,7 +149,7 @@ sync_reset #(
 )
 sync_reset_125mhz_inst (
     .clk(clk_125mhz_int),
-    .rst(~clock_ok),
+    .rst(~locked),
     .out(rst_refclk_int)
 );
 

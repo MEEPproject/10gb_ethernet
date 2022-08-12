@@ -54,7 +54,7 @@ set_property  ip_repo_paths  $ip_dir_list [current_project]
 ####################################################
 #set g_top_name ${g_project_name}_top
 
-set top_module "$root_dir/src/meep_eth_top.v"
+set top_module "$root_dir/src/ethernet_alveo.v"
 #set src_files [glob ${root_dir}/src/*]
 #set ip_files [glob -nocomplain ${root_dir}/ip/*/*.xci]
 #add_files ${src_files}
@@ -64,7 +64,7 @@ set top_module "$root_dir/src/meep_eth_top.v"
 # Add Constraint files to project
 if {$g_qsfp_port != "pcie"} {
     # TODO: Add Out Of Context constraints in case it is necessary in the future
-    set top_module "$root_dir/src/meep_eth_top.v"
+    set top_module "$root_dir/src/ethernet_alveo.v"
     add_files -fileset [get_filesets constrs_1] "$root_dir/xdc/${g_board_part}/ethernet_${g_qsfp_port}.xdc"
     source ${g_root_dir}/ip/${g_board_part}/ethernet-${g_board_part}.tcl
     #set_property target_language VHDL [current_project]
@@ -76,6 +76,10 @@ if {$g_qsfp_port != "pcie"} {
     source ${g_root_dir}/ip/common/ethernet-pcie.tcl
 
 }
+
+# Redefine the variable for the next tcl, which will be load the environment.tcl, ignoring the changes made in this script.
+
+set g_alveo_board $g_board_part
 source $root_dir/tcl/gen_ip.tcl
 
 puts "Project generation ended successfully"

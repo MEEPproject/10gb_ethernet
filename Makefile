@@ -3,17 +3,20 @@ VIVADO_VER  := 2021.2
 VIVADO_PATH := /opt/Xilinx/Vivado/$(VIVADO_VER)/bin/
 VIVADO_XLNX := $(VIVADO_PATH)/vivado
 VIVADO_OPT  := -mode batch -nolog -nojournal -notrace -source
-FPGA_BOARD  ?= u280
-QSFP_PORT   ?= qsfp0
+FPGA_BOARD  ?= u55c
 
 #Options: qsfp0, qsfp1, pcie
 
+PORTS = qsfp0 qsfp1 pcie
+
+all: qsfp0
+
 #Generate the Ethernet IP
 
-generate_ip:
-	@(echo "Generate 10Gb Ethernt IP for the Alveo $(FPGA_BOARD) and the port $(QSFP_PORT)")
-	$(VIVADO_XLNX) $(VIVADO_OPT)  ./tcl/gen_project.tcl -tclargs $(FPGA_BOARD) $(QSFP_PORT)
-	@(echo "IP created under folder $(QSFP_PORT)")
+$(PORTS): 
+	@(echo "Generate 10Gb Ethernt IP for the Alveo $(FPGA_BOARD) and the port $@")
+	$(VIVADO_XLNX) $(VIVADO_OPT)  ./tcl/gen_project.tcl -tclargs $(FPGA_BOARD) $@
+	@(echo "IP created under folder $@")
 
 
 clean:
