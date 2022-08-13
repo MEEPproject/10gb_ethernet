@@ -65,7 +65,7 @@ set top_module "$root_dir/src/ethernet_alveo.v"
 if {$g_qsfp_port != "pcie"} {
     # TODO: Add Out Of Context constraints in case it is necessary in the future
     set top_module "$root_dir/src/ethernet_alveo.v"
-    add_files -fileset [get_filesets constrs_1] "$root_dir/xdc/${g_board_part}/ethernet_${g_qsfp_port}.xdc"
+    #add_files -fileset [get_filesets constrs_1] "$root_dir/xdc/${g_board_part}/ethernet_${g_qsfp_port}.xdc"
     source ${g_root_dir}/ip/${g_board_part}/ethernet-${g_board_part}.tcl
     #set_property target_language VHDL [current_project]
 } else {
