@@ -21,9 +21,7 @@ set files [list \
   [file normalize "${g_root_dir}/src/verilog-ethernet/lib/axis/rtl/axis_async_fifo_adapter.v"] \
   [file normalize "${g_root_dir}/src/verilog-ethernet/rtl/lfsr.v"] \
   [file normalize "${g_root_dir}/src/verilog-ethernet/rtl/ptp_clock_cdc.v"] \
-  [file normalize "${g_root_dir}/src/ethernet.v"] \
   [file normalize "${g_root_dir}/src/ethernet_alveo.v"] \
-  [file normalize "${g_root_dir}/src/meep_eth_top.v"] \
 
 ]
 add_files $files
