@@ -49,7 +49,7 @@ module ethernet_alveo #(
 
     /* ETH0 AXIS */
     (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH0_TX_AXIS TDATA" *)
-    (* X_INTERFACE_PARAMETER = "CLK_DOMAIN eth_gt_clock" *)
+    (* X_INTERFACE_PARAMETER = "CLK_DOMAIN eth_gt_user_clock" *)
     input wire [63:0] eth0_tx_axis_tdata,
     (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH0_TX_AXIS TKEEP" *)
     input wire [7:0] eth0_tx_axis_tkeep,
@@ -63,6 +63,7 @@ module ethernet_alveo #(
     input wire eth0_tx_axis_tuser,
 
     (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH0_RX_AXIS TDATA" *)
+    (* X_INTERFACE_PARAMETER = "CLK_DOMAIN eth_gt_user_clock" *)
     output wire [63:0] eth0_rx_axis_tdata,
     (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH0_RX_AXIS TKEEP" *)
     output wire [7:0] eth0_rx_axis_tkeep,
