@@ -77,28 +77,23 @@ module ethernet_alveo #(
     output wire eth0_rx_axis_tuser,
     
     	/* QSFP28 */
-    (* X_INTERFACE_INFO = "xilinx.com:interface:gt:1.0 qsfp_1x GTX_P" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME qsfp_1x, CAN_DEBUG false" *) output qsfp0_tx1_p,
-    (* X_INTERFACE_INFO = "xilinx.com:interface:gt:1.0 qsfp_1x GTX_N" *) output qsfp0_tx1_n,
-    (* X_INTERFACE_INFO = "xilinx.com:interface:gt:1.0 qsfp_1x GRX_P" *) input  qsfp0_rx1_p,
-    (* X_INTERFACE_INFO = "xilinx.com:interface:gt:1.0 qsfp_1x GRX_N" *) input  qsfp0_rx1_n,
-    (* X_INTERFACE_INFO = "xilinx.com:interface:diff_clock:1.0 qsfp_refclk CLK_N" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME qsfp_refclk, CAN_DEBUG false " *) input qsfp0_mgt_refclk_1_n,
-    (* X_INTERFACE_INFO = "xilinx.com:interface:diff_clock:1.0 qsfp_refclk CLK_P" *)input qsfp0_mgt_refclk_1_p,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:gt:1.0 qsfp_1x GTX_P" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME qsfp_1x, CAN_DEBUG false" *) output qsfp_tx1_p,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:gt:1.0 qsfp_1x GTX_N" *) output qsfp_tx1_n,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:gt:1.0 qsfp_1x GRX_P" *) input  qsfp_rx1_p,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:gt:1.0 qsfp_1x GRX_N" *) input  qsfp_rx1_n,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:diff_clock:1.0 qsfp_refclk CLK_N" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME qsfp_refclk, CAN_DEBUG false " *) input qsfp_mgt_refclk_1_n,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:diff_clock:1.0 qsfp_refclk CLK_P" *)input qsfp_mgt_refclk_1_p,
 
     /* QSFP28 #0 */
-/*    output wire         qsfp0_tx1_p,
-    output wire         qsfp0_tx1_n,
-    input  wire         qsfp0_rx1_p,
-    input  wire         qsfp0_rx1_n,
-    input  wire         qsfp0_mgt_refclk_1_p,
-    input  wire         qsfp0_mgt_refclk_1_n,*/
-    output wire         qsfp0_refclk_oe_b,
-    output wire         qsfp0_refclk_fs
+
+    output wire         qsfp_refclk_oe_b,
+    output wire         qsfp_refclk_fs
 
 );
 
 // QSFP0
-assign qsfp0_refclk_oe_b = 1'b0;
-assign qsfp0_refclk_fs = 1'b1;
+assign qsfp_refclk_oe_b = 1'b0;
+assign qsfp_refclk_fs = 1'b1;
 
 assign eth_gt_resetn = ~tx_rst;
 
@@ -164,20 +159,20 @@ end
 // XGMII 10G PHY
 
 wire                         rx_rst;
-wire [XGMII_DATA_WIDTH-1:0]  qsfp0_txd_1;
-wire [XGMII_CTRL_WIDTH-1:0]  qsfp0_txc_1;
-wire [XGMII_DATA_WIDTH-1:0]  qsfp0_rxd_1;
-wire [XGMII_CTRL_WIDTH-1:0]  qsfp0_rxc_1;
-wire [6:0]                   qsfp0_rx_error_count_1;
+wire [XGMII_DATA_WIDTH-1:0]  qsfp_txd_1;
+wire [XGMII_CTRL_WIDTH-1:0]  qsfp_txc_1;
+wire [XGMII_DATA_WIDTH-1:0]  qsfp_rxd_1;
+wire [XGMII_CTRL_WIDTH-1:0]  qsfp_rxc_1;
+wire [6:0]                   qsfp_rx_error_count_1;
 
-wire qsfp0_rx_block_lock_1;
-wire qsfp0_rx_block_lock_2;
-wire qsfp0_rx_block_lock_3;
-wire qsfp0_rx_block_lock_4;
+wire qsfp_rx_block_lock_1;
+wire qsfp_rx_block_lock_2;
+wire qsfp_rx_block_lock_3;
+wire qsfp_rx_block_lock_4;
 
 wire qsfp_gtpowergood;
 
-wire qsfp0_mgt_refclk_1;
+wire qsfp_mgt_refclk_1;
 
 wire sfp_gt_txclkout;
 
@@ -202,11 +197,11 @@ wire gt_rx_reset = ~&gt_rxpmaresetdone;
 reg gt_userclk_tx_active = 1'b0;
 reg gt_userclk_rx_active = 1'b0;
 
-IBUFDS_GTE4 ibufds_gte4_qsfp0_mgt_refclk_1_inst (
-    .I             (qsfp0_mgt_refclk_1_p),
-    .IB            (qsfp0_mgt_refclk_1_n),
+IBUFDS_GTE4 ibufds_gte4_qsfp_mgt_refclk_1_inst (
+    .I             (qsfp_mgt_refclk_1_p),
+    .IB            (qsfp_mgt_refclk_1_n),
     .CEB           (1'b0),
-    .O             (qsfp0_mgt_refclk_1),
+    .O             (qsfp_mgt_refclk_1),
     .ODIV2         ()
 );
 
@@ -255,17 +250,17 @@ sync_reset_156mhz_inst (
     .out(tx_rst)
 );
 
-wire [5:0] qsfp0_gt_txheader_1;
-wire [63:0] qsfp0_gt_txdata_1;
-wire qsfp0_gt_rxgearboxslip_1;
-wire [5:0] qsfp0_gt_rxheader_1;
-wire [1:0] qsfp0_gt_rxheadervalid_1;
-wire [63:0] qsfp0_gt_rxdata_1;
-wire [1:0] qsfp0_gt_rxdatavalid_1;
+wire [5:0] qsfp_gt_txheader_1;
+wire [63:0] qsfp_gt_txdata_1;
+wire qsfp_gt_rxgearboxslip_1;
+wire [5:0] qsfp_gt_rxheader_1;
+wire [1:0] qsfp_gt_rxheadervalid_1;
+wire [63:0] qsfp_gt_rxdata_1;
+wire [1:0] qsfp_gt_rxdatavalid_1;
 
-    if(qsfp_number == 0) begin
-        gtwizard_ultrascale_0
-        qsfp0_gt1_inst (
+
+    gtwizard_ultrascale_qsfp
+        qsfp_gt1_inst (
             .gtwiz_userclk_tx_active_in(gt_userclk_tx_active),
             .gtwiz_userclk_rx_active_in(gt_userclk_rx_active),
 
@@ -283,19 +278,19 @@ wire [1:0] qsfp0_gt_rxdatavalid_1;
             .gtwiz_reset_tx_done_out(gt_reset_tx_done),
             .gtwiz_reset_rx_done_out(gt_reset_rx_done),
 
-            .gtrefclk00_in(qsfp0_mgt_refclk_1),
+            .gtrefclk00_in(qsfp_mgt_refclk_1),
 
             .qpll0outclk_out(),
             .qpll0outrefclk_out(),
 
-            .gtyrxn_in(qsfp0_rx1_n),
-            .gtyrxp_in(qsfp0_rx1_p),
+            .gtyrxn_in(qsfp_rx1_n),
+            .gtyrxp_in(qsfp_rx1_p),
 
             .rxusrclk_in(rx_clk),
             .rxusrclk2_in(rx_clk),
 
-            .gtwiz_userdata_tx_in(qsfp0_gt_txdata_1),
-            .txheader_in(qsfp0_gt_txheader_1),
+            .gtwiz_userdata_tx_in(qsfp_gt_txdata_1),
+            .txheader_in(qsfp_gt_txheader_1),
             .txsequence_in(1'b0),
 
             .txusrclk_in(tx_clk),
@@ -303,14 +298,14 @@ wire [1:0] qsfp0_gt_rxdatavalid_1;
 
             .gtpowergood_out(qsfp_gtpowergood),
 
-            .gtytxn_out(qsfp0_tx1_n),
-            .gtytxp_out(qsfp0_tx1_p),
+            .gtytxn_out(qsfp_tx1_n),
+            .gtytxp_out(qsfp_tx1_p),
 
-            .rxgearboxslip_in(qsfp0_gt_rxgearboxslip_1),
-            .gtwiz_userdata_rx_out(qsfp0_gt_rxdata_1),
-            .rxdatavalid_out(qsfp0_gt_rxdatavalid_1),
-            .rxheader_out(qsfp0_gt_rxheader_1),
-            .rxheadervalid_out(qsfp0_gt_rxheadervalid_1),
+            .rxgearboxslip_in(qsfp_gt_rxgearboxslip_1),
+            .gtwiz_userdata_rx_out(qsfp_gt_rxdata_1),
+            .rxdatavalid_out(qsfp_gt_rxdatavalid_1),
+            .rxheader_out(qsfp_gt_rxheader_1),
+            .rxheadervalid_out(qsfp_gt_rxheadervalid_1),
             .rxoutclk_out(sfp_gt_rxclkout),
             .rxpmaresetdone_out(gt_rxpmaresetdone),
             .rxprgdivresetdone_out(gt_rxprgdivresetdone),
@@ -320,70 +315,11 @@ wire [1:0] qsfp0_gt_rxdatavalid_1;
             .txpmaresetdone_out(gt_txpmaresetdone),
             .txprgdivresetdone_out(gt_txprgdivresetdone)
         );
-       end
-else begin
-        gtwizard_ultrascale_1
-        qsfp0_gt1_inst (
-            .gtwiz_userclk_tx_active_in(gt_userclk_tx_active),
-            .gtwiz_userclk_rx_active_in(gt_userclk_rx_active),
-
-            .gtwiz_reset_clk_freerun_in(clk_125mhz_int),
-            .gtwiz_reset_all_in(rst_125mhz_int),
-
-            .gtwiz_reset_tx_pll_and_datapath_in(1'b0),
-            .gtwiz_reset_tx_datapath_in(1'b0),
-
-            .gtwiz_reset_rx_pll_and_datapath_in(1'b0),
-            .gtwiz_reset_rx_datapath_in(1'b0),
-
-            .gtwiz_reset_rx_cdr_stable_out(),
-
-            .gtwiz_reset_tx_done_out(gt_reset_tx_done),
-            .gtwiz_reset_rx_done_out(gt_reset_rx_done),
-
-            .gtrefclk00_in(qsfp0_mgt_refclk_1),
-
-            .qpll0outclk_out(),
-            .qpll0outrefclk_out(),
-
-            .gtyrxn_in(qsfp0_rx1_n),
-            .gtyrxp_in(qsfp0_rx1_p),
-
-            .rxusrclk_in(rx_clk),
-            .rxusrclk2_in(rx_clk),
-
-            .gtwiz_userdata_tx_in(qsfp0_gt_txdata_1),
-            .txheader_in(qsfp0_gt_txheader_1),
-            .txsequence_in(1'b0),
-
-            .txusrclk_in(tx_clk),
-            .txusrclk2_in(tx_clk),
-
-            .gtpowergood_out(qsfp_gtpowergood),
-
-            .gtytxn_out(qsfp0_tx1_n),
-            .gtytxp_out(qsfp0_tx1_p),
-
-            .rxgearboxslip_in(qsfp0_gt_rxgearboxslip_1),
-            .gtwiz_userdata_rx_out(qsfp0_gt_rxdata_1),
-            .rxdatavalid_out(qsfp0_gt_rxdatavalid_1),
-            .rxheader_out(qsfp0_gt_rxheader_1),
-            .rxheadervalid_out(qsfp0_gt_rxheadervalid_1),
-            .rxoutclk_out(sfp_gt_rxclkout),
-            .rxpmaresetdone_out(gt_rxpmaresetdone),
-            .rxprgdivresetdone_out(gt_rxprgdivresetdone),
-            .rxstartofseq_out(),
-
-            .txoutclk_out(sfp_gt_txclkout),
-            .txpmaresetdone_out(gt_txpmaresetdone),
-            .txprgdivresetdone_out(gt_txprgdivresetdone)
-        );
-end
 
 sync_reset #(
     .N(4)
 )
-qsfp0_rx_rst_1_reset_sync_inst (
+qsfp_rx_rst_1_reset_sync_inst (
     .clk(rx_clk),
     .rst(~gt_reset_rx_done),
     .out(rx_rst)
@@ -392,22 +328,22 @@ qsfp0_rx_rst_1_reset_sync_inst (
 eth_phy_10g #(
     .BIT_REVERSE(1)
 )
-qsfp0_phy_1_inst (
+qsfp_phy_1_inst (
     .tx_clk(tx_clk),
     .tx_rst(tx_rst),
     .rx_clk(rx_clk),
     .rx_rst(rx_rst),
-    .xgmii_txd(qsfp0_txd_1),
-    .xgmii_txc(qsfp0_txc_1),
-    .xgmii_rxd(qsfp0_rxd_1),
-    .xgmii_rxc(qsfp0_rxc_1),
-    .serdes_tx_data(qsfp0_gt_txdata_1),
-    .serdes_tx_hdr(qsfp0_gt_txheader_1),
-    .serdes_rx_data(qsfp0_gt_rxdata_1),
-    .serdes_rx_hdr(qsfp0_gt_rxheader_1),
-    .serdes_rx_bitslip(qsfp0_gt_rxgearboxslip_1),
-    .rx_error_count(qsfp0_rx_error_count_1),
-    .rx_block_lock(qsfp0_rx_block_lock_1),
+    .xgmii_txd(qsfp_txd_1),
+    .xgmii_txc(qsfp_txc_1),
+    .xgmii_rxd(qsfp_rxd_1),
+    .xgmii_rxc(qsfp_rxc_1),
+    .serdes_tx_data(qsfp_gt_txdata_1),
+    .serdes_tx_hdr(qsfp_gt_txheader_1),
+    .serdes_rx_data(qsfp_gt_rxdata_1),
+    .serdes_rx_hdr(qsfp_gt_rxheader_1),
+    .serdes_rx_bitslip(qsfp_gt_rxgearboxslip_1),
+    .rx_error_count(qsfp_rx_error_count_1),
+    .rx_block_lock(qsfp_rx_block_lock_1),
     .rx_high_ber(),
     .tx_prbs31_enable(0),
     .rx_prbs31_enable(0)
@@ -454,10 +390,10 @@ eth_mac_10g_fifo_inst (
     .rx_axis_tready(eth0_rx_axis_tready),
     .rx_axis_tlast(eth0_rx_axis_tlast),
 
-    .xgmii_rxd(qsfp0_rxd_1),
-    .xgmii_rxc(qsfp0_rxc_1),
-    .xgmii_txd(qsfp0_txd_1),
-    .xgmii_txc(qsfp0_txc_1),
+    .xgmii_rxd(qsfp_rxd_1),
+    .xgmii_rxc(qsfp_rxc_1),
+    .xgmii_txd(qsfp_txd_1),
+    .xgmii_txc(qsfp_txc_1),
 
     .tx_fifo_overflow(eth0_status[0]),
     .tx_fifo_bad_frame(eth0_status[1]),
