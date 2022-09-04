@@ -27,8 +27,7 @@ module ethernet_alveo #(
     // Timestamping configuration (port)
     parameter PTP_TS_ENABLE = 0,
     parameter TX_PTP_TS_FIFO_DEPTH = 32,
-    parameter RX_PTP_TS_FIFO_DEPTH = 32,
-    parameter qsfp_number = 0
+    parameter RX_PTP_TS_FIFO_DEPTH = 32
 
 ) (
 
@@ -37,7 +36,7 @@ module ethernet_alveo #(
     input wire locked,
 
    (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 eth_gt_user_clock CLK" *)
-   (* X_INTERFACE_PARAMETER = "ASSOCIATED_BUSIF ETH0_TX_AXIS:ETH0_RX_AXIS" *)
+   (* X_INTERFACE_PARAMETER = "ASSOCIATED_BUSIF ETH_TX_AXIS:ETH_RX_AXIS" *)
    (* X_INTERFACE_PARAMETER = "ASSOCIATED_RESET eth_gt_resetn" *)
     output wire eth_gt_user_clock,
 
@@ -45,36 +44,36 @@ module ethernet_alveo #(
    (* X_INTERFACE_PARAMETER = "POLARITY ACTIVE_LOW" *)	    
     output wire	eth_gt_resetn,
 
-    output wire [15:0] eth0_status,
+    output wire [15:0] eth_status,
 
-    /* ETH0 AXIS */
-    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH0_TX_AXIS TDATA" *)
+    /* ETH AXIS */
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH_TX_AXIS TDATA" *)
     (* X_INTERFACE_PARAMETER = "CLK_DOMAIN eth_gt_user_clock" *)
-    input wire [63:0] eth0_tx_axis_tdata,
-    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH0_TX_AXIS TKEEP" *)
-    input wire [7:0] eth0_tx_axis_tkeep,
-    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH0_TX_AXIS TVALID" *)
-    input wire eth0_tx_axis_tvalid,
-    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH0_TX_AXIS TREADY" *)
-    output wire eth0_tx_axis_tready,
-    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH0_TX_AXIS TLAST" *)
-    input wire eth0_tx_axis_tlast,
-    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH0_TX_AXIS TUSER" *)
-    input wire eth0_tx_axis_tuser,
+    input wire [63:0] eth_tx_axis_tdata,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH_TX_AXIS TKEEP" *)
+    input wire [7:0] eth_tx_axis_tkeep,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH_TX_AXIS TVALID" *)
+    input wire eth_tx_axis_tvalid,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH_TX_AXIS TREADY" *)
+    output wire eth_tx_axis_tready,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH_TX_AXIS TLAST" *)
+    input wire eth_tx_axis_tlast,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH_TX_AXIS TUSER" *)
+    input wire eth_tx_axis_tuser,
 
-    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH0_RX_AXIS TDATA" *)
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH_RX_AXIS TDATA" *)
     (* X_INTERFACE_PARAMETER = "CLK_DOMAIN eth_gt_user_clock" *)
-    output wire [63:0] eth0_rx_axis_tdata,
-    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH0_RX_AXIS TKEEP" *)
-    output wire [7:0] eth0_rx_axis_tkeep,
-    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH0_RX_AXIS TVALID" *)
-    output wire eth0_rx_axis_tvalid,
-    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH0_RX_AXIS TREADY" *)
-    input wire eth0_rx_axis_tready,
-    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH0_RX_AXIS TLAST" *)
-    output wire eth0_rx_axis_tlast,
-    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH0_RX_AXIS TUSER" *)
-    output wire eth0_rx_axis_tuser,
+    output wire [63:0] eth_rx_axis_tdata,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH_RX_AXIS TKEEP" *)
+    output wire [7:0] eth_rx_axis_tkeep,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH_RX_AXIS TVALID" *)
+    output wire eth_rx_axis_tvalid,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH_RX_AXIS TREADY" *)
+    input wire eth_rx_axis_tready,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH_RX_AXIS TLAST" *)
+    output wire eth_rx_axis_tlast,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 ETH_RX_AXIS TUSER" *)
+    output wire eth_rx_axis_tuser,
     
     	/* QSFP28 */
     (* X_INTERFACE_INFO = "xilinx.com:interface:gt:1.0 qsfp_1x GTX_P" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME qsfp_1x, CAN_DEBUG false" *) output qsfp_tx1_p,
@@ -376,34 +375,34 @@ eth_mac_10g_fifo_inst (
     .logic_clk(tx_clk),
     .logic_rst(tx_rst),
 
-    .tx_axis_tdata(eth0_tx_axis_tdata),
-    .tx_axis_tkeep(eth0_tx_axis_tkeep),
-    .tx_axis_tuser(eth0_tx_axis_tuser),
-    .tx_axis_tvalid(eth0_tx_axis_tvalid),
-    .tx_axis_tready(eth0_tx_axis_tready),
-    .tx_axis_tlast(eth0_tx_axis_tlast),
+    .tx_axis_tdata(eth_tx_axis_tdata),
+    .tx_axis_tkeep(eth_tx_axis_tkeep),
+    .tx_axis_tuser(eth_tx_axis_tuser),
+    .tx_axis_tvalid(eth_tx_axis_tvalid),
+    .tx_axis_tready(eth_tx_axis_tready),
+    .tx_axis_tlast(eth_tx_axis_tlast),
 
-    .rx_axis_tdata(eth0_rx_axis_tdata),
-    .rx_axis_tkeep(eth0_rx_axis_tkeep),
-    .rx_axis_tuser(eth0_rx_axis_tuser),
-    .rx_axis_tvalid(eth0_rx_axis_tvalid),
-    .rx_axis_tready(eth0_rx_axis_tready),
-    .rx_axis_tlast(eth0_rx_axis_tlast),
+    .rx_axis_tdata(eth_rx_axis_tdata),
+    .rx_axis_tkeep(eth_rx_axis_tkeep),
+    .rx_axis_tuser(eth_rx_axis_tuser),
+    .rx_axis_tvalid(eth_rx_axis_tvalid),
+    .rx_axis_tready(eth_rx_axis_tready),
+    .rx_axis_tlast(eth_rx_axis_tlast),
 
     .xgmii_rxd(qsfp_rxd_1),
     .xgmii_rxc(qsfp_rxc_1),
     .xgmii_txd(qsfp_txd_1),
     .xgmii_txc(qsfp_txc_1),
 
-    .tx_fifo_overflow(eth0_status[0]),
-    .tx_fifo_bad_frame(eth0_status[1]),
-    .tx_fifo_good_frame(eth0_status[2]),
-    .tx_error_underflow(eth0_status[3]),
-    .rx_error_bad_frame(eth0_status[4]),
-    .rx_error_bad_fcs(eth0_status[5]),
-    .rx_fifo_overflow(eth0_status[6]),
-    .rx_fifo_bad_frame(eth0_status[7]),
-    .rx_fifo_good_frame(eth0_status[8]),
+    .tx_fifo_overflow(eth_status[0]),
+    .tx_fifo_bad_frame(eth_status[1]),
+    .tx_fifo_good_frame(eth_status[2]),
+    .tx_error_underflow(eth_status[3]),
+    .rx_error_bad_frame(eth_status[4]),
+    .rx_error_bad_fcs(eth_status[5]),
+    .rx_fifo_overflow(eth_status[6]),
+    .rx_fifo_bad_frame(eth_status[7]),
+    .rx_fifo_good_frame(eth_status[8]),
 
     .ifg_delay(8'd12)
 );
