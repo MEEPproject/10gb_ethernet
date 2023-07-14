@@ -24,7 +24,7 @@ workflow:
 stages:
   - build
 
-Build_qsfp0:
+Build_10GB_ethernet_qsfp0:
   stage: build
   tags:
     - bistream
@@ -39,7 +39,7 @@ Build_qsfp0:
     - grep "IP created under folder qsfp0" build_ip.log
     - echo "The Ip was generated succesfully"
 
-Build_qsfp1:
+Build_10GB_ethernet_qsfp1:
   stage: build
   tags:
     - bistream
@@ -54,7 +54,7 @@ Build_qsfp1:
     - grep "IP created under folder qsfp1" build_ip.log
     - echo "The Ip was generated succesfully"
 
-Build_pcie:
+Build_10GB_ethernet_pcie:
   stage: build
   tags:
     - bistream
