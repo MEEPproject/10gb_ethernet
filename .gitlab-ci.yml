@@ -1,0 +1,70 @@
+# /*
+#  * Filename: ../ip/10GbEthernet/.gitlab-ci.yml
+#  * Created Date: Friday, July 14 , 14:28 pm
+#  * Author: Francelly Cano
+#  *
+#  * Copyright (c) 2023 MEEP Project
+#  */
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "pipeline" # Trigger method
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: "$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS"
+      when: never
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
+      when: never # Pushing to main doesn't create pipelines
+
+.ip_rules:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "web"
+
+stages:
+  - build
+
+Build_10GB_ethernet_qsfp0:
+  stage: build
+  tags:
+    - bistream
+  retry: 2
+  rules:
+    - !reference [.ip_rules, rules]
+  script:
+    - echo "building 10GB Ethernet IP"
+    - make qsfp0 > build_ip.log
+    - cat build_ip.log
+  after_script:
+    - grep "IP succesfully packaged" build_ip.log
+    - grep "IP created under folder qsfp0" build_ip.log
+    - echo "The Ip was generated succesfully"
+
+Build_10GB_ethernet_qsfp1:
+  stage: build
+  tags:
+    - bistream
+  retry: 2
+  rules:
+    - !reference [.ip_rules, rules]
+  script:
+    - echo "building 10GB Ethernet IP"
+    - make qsfp1 > build_ip.log
+  after_script:
+    - grep "IP succesfully packaged" build_ip.log
+    - grep "IP created under folder qsfp1" build_ip.log
+    - echo "The Ip was generated succesfully"
+
+Build_10GB_ethernet_pcie:
+  stage: build
+  tags:
+    - bistream
+  retry: 2
+  rules:
+    - !reference [.ip_rules, rules]
+  script:
+    - echo "building 10GB Ethernet IP"
+    - make pcie > build_ip.log
+  after_script:
+    - grep "IP succesfully packaged" build_ip.log
+    - echo "The Ip was generated succesfully"

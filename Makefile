@@ -13,7 +13,7 @@ all: qsfp0
 
 #Generate the Ethernet IP
 
-$(PORTS): 
+$(PORTS):
 	@(echo "Generate 10Gb Ethernt IP for the Alveo $(FPGA_BOARD) and the port $@")
 	$(VIVADO_XLNX) $(VIVADO_OPT)  ./tcl/gen_project.tcl -tclargs $(FPGA_BOARD) $@
 	@(echo "IP created under folder $@")
@@ -22,7 +22,7 @@ $(PORTS):
 clean:
 	git clean -f
 	@(cd ip; find . -type f ! -name "*.tcl" -exec rm -r {} \;)
-	rm -rf xgui project qsfp*
+	rm -rf xgui project qsfp* pcie
 
 
 
