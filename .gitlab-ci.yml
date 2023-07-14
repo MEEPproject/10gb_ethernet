@@ -6,8 +6,6 @@
 #  * Copyright (c) 2023 MEEP Project
 #  */
 
-variables:
-
 workflow:
   rules:
     - if: $CI_PIPELINE_SOURCE == "pipeline" # Trigger method
@@ -18,6 +16,11 @@ workflow:
     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
       when: never # Pushing to main doesn't create pipelines
 
+.ip_rules:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "web"
+
 stages:
   - build
 
@@ -27,7 +30,7 @@ Build_qsfp0:
     - $bistream
   retry: 2
   rules:
-    - if: $CI_PIPELINE_SOURCE == "web"
+    - !reference [.ip_rules, rules]
   script:
     - echo "building 10GB Ethernet IP"
     - make qsfp0 > build_ip.log
@@ -42,7 +45,7 @@ Build_qsfp1:
     - $bistream
   retry: 2
   rules:
-    - if: $CI_PIPELINE_SOURCE == "web"
+    - !reference [.ip_rules, rules]
   script:
     - echo "building 10GB Ethernet IP"
     - make qsfp1 > build_ip.log
@@ -57,7 +60,7 @@ Build_pcie:
     - $bistream
   retry: 2
   rules:
-    - if: $CI_PIPELINE_SOURCE == "web"
+    - !reference [.ip_rules, rules]
   script:
     - echo "building 10GB Ethernet IP"
     - make pcie > build_ip.log
