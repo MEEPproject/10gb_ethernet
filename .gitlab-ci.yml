@@ -27,7 +27,7 @@ stages:
 Build_qsfp0:
   stage: build
   tags:
-    - $bistream
+    - bistream
   retry: 2
   rules:
     - !reference [.ip_rules, rules]
@@ -42,7 +42,7 @@ Build_qsfp0:
 Build_qsfp1:
   stage: build
   tags:
-    - $bistream
+    - bistream
   retry: 2
   rules:
     - !reference [.ip_rules, rules]
@@ -57,7 +57,7 @@ Build_qsfp1:
 Build_pcie:
   stage: build
   tags:
-    - $bistream
+    - bistream
   retry: 2
   rules:
     - !reference [.ip_rules, rules]
