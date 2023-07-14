@@ -22,7 +22,7 @@ $(PORTS):
 clean:
 	git clean -f
 	@(cd ip; find . -type f ! -name "*.tcl" -exec rm -r {} \;)
-	rm -rf xgui project qsfp*
+	rm -rf xgui project qsfp* pcie
 
 
 

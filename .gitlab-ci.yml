@@ -34,6 +34,7 @@ Build_10GB_ethernet_qsfp0:
   script:
     - echo "building 10GB Ethernet IP"
     - make qsfp0 > build_ip.log
+    - cat build_ip.log
   after_script:
     - grep "IP succesfully packaged" build_ip.log
     - grep "IP created under folder qsfp0" build_ip.log
