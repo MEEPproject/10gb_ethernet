@@ -2,7 +2,7 @@
     <img src="Images/meep-logo-symbol.png" width="200px" alt="<MEEP logo>"/>
 
 <br/>
-<h1 align="center">MEEP FPGA Shell
+<h1 align="center">MEEP 10Gb Ethernet
 <br/>
 <br/>
 
