@@ -27,7 +27,7 @@ stages:
 Build_10GB_ethernet_qsfp0:
   stage: build
   tags:
-    - bistream
+    - synthesis
   retry: 2
   rules:
     - !reference [.ip_rules, rules]
@@ -43,7 +43,7 @@ Build_10GB_ethernet_qsfp0:
 Build_10GB_ethernet_qsfp1:
   stage: build
   tags:
-    - bistream
+    - synthesis
   retry: 2
   rules:
     - !reference [.ip_rules, rules]
@@ -58,7 +58,7 @@ Build_10GB_ethernet_qsfp1:
 Build_10GB_ethernet_pcie:
   stage: build
   tags:
-    - bistream
+    - synthesis
   retry: 2
   rules:
     - !reference [.ip_rules, rules]
